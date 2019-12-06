@@ -31,16 +31,28 @@ export default {
       }&scope=user%20repo%20read:org`;
     }
   },
-  created() {
+  created: function() {
     const code = window.location.href.match(/\?code=(.*)/);
     if (code) {
       this.isLoading = true;
-      axios
-        .get(`${AxiosHelper.gatekeeperUrl}/${code[1].slice(0, 20)}`)
-        .then(res => {
+      console.log(this.isLoading);
+      axios({
+        method: `post`,
+
+        url: `${AxiosHelper.gatekeeperUrl}?client_id=${
+          AuthHelper.clientId
+        }&client_secret=${
+          AuthHelper.clientSecret
+        }&code=${code[1].slice(0, 20)}`,
+
+        headers:{
+          accept: 'application/json'
+        }
+      }).then(res => {
           this.isLoading = false;
           localStorage.setItem('token', res.data.token);
           window.location = AxiosHelper.homeUrl;
+          console.log(localStorage.getItem('token'));
         })
         .catch(err => {
           this.isLoading = false;
